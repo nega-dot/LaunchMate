@@ -92,7 +92,7 @@ const Dashboard: React.FC = () => {
               {t('dashboard.welcomeNewDesc')}
             </p>
             <Link to="/wizard">
-              <Button className="bg-white text-blue-600 hover:bg-gray-100">
+              <Button className="bg-white text-gray-900 hover:bg-gray-100 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white">
                 {t('landing.hero.cta')}
               </Button>
             </Link>

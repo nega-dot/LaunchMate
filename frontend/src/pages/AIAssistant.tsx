@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, MessageSquare, Calculator, Search, CheckCircle, HelpCircle, Phone } from 'lucide-react';
+import { Send, Bot, User, MessageSquare, Calculator, Search, CheckCircle, HelpCircle, Phone, Sparkles } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import Card from '../components/UI/Card';
@@ -132,6 +132,19 @@ const AIAssistant: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [state.chatHistory]);
+
+  // Add welcome message if no chat history
+  useEffect(() => {
+    if (state.chatHistory.length === 0) {
+      const welcomeMessage: ChatMessage = {
+        id: 'welcome',
+        message: "Hello! I'm your LaunchMate AI Assistant. I can help you with startup compliance, government schemes, licensing requirements, and more. How can I assist you today?",
+        sender: 'bot',
+        timestamp: new Date().toISOString(),
+      };
+      dispatch({ type: 'ADD_CHAT_MESSAGE', payload: welcomeMessage });
+    }
+  }, []);
 
   const popularQuestions = [
     'What documents do I need for GST registration?',
@@ -489,7 +502,10 @@ Want help with the application process?`;
                     <div className="text-center py-8">
                       <MessageSquare className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
                       <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                        Welcome! How can I help you today?
+                        <div className="flex items-center justify-center gap-2">
+                          <Sparkles className="h-5 w-5 text-blue-500" />
+                          Welcome! How can I help you today?
+                        </div>
                       </h4>
                       <p className="text-gray-600 dark:text-gray-300 mb-6">
                         Ask me anything about startup compliance, licenses, government schemes, or how to use LaunchMate features.
@@ -516,30 +532,30 @@ Want help with the application process?`;
                       {state.chatHistory.map((msg) => (
                         <div
                           key={msg.id}
-                          className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                          className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
                         >
                           <div className={`flex items-start space-x-2 max-w-[80%] ${msg.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                             <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                               msg.sender === 'user' 
                                 ? 'bg-blue-500' 
-                                : 'bg-gray-200 dark:bg-gray-700'
+                                : 'bg-gradient-to-br from-purple-500 to-blue-500'
                             }`}>
                               {msg.sender === 'user' ? (
                                 <User className="h-4 w-4 text-white" />
                               ) : (
-                                <Bot className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+                                <Bot className="h-4 w-4 text-white" />
                               )}
                             </div>
                             <div className={`px-4 py-2 rounded-2xl text-sm ${
                               msg.sender === 'user'
                                 ? 'bg-blue-500 text-white'
-                                : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                                : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 shadow-sm'
                             }`}>
                               <div className="whitespace-pre-wrap break-words">{msg.message}</div>
                               <div className={`text-xs mt-1 ${
                                 msg.sender === 'user' 
                                   ? 'text-blue-100' 
-                                  : 'text-gray-500 dark:text-gray-400'
+                                  : 'text-gray-400 dark:text-gray-500'
                               }`}>
                                 {new Date(msg.timestamp).toLocaleTimeString([], { 
                                   hour: '2-digit', 
@@ -554,14 +570,14 @@ Want help with the application process?`;
                       {isTyping && (
                         <div className="flex justify-start">
                           <div className="flex items-start space-x-2">
-                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                              <Bot className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                              <Bot className="h-4 w-4 text-white" />
                             </div>
-                            <div className="bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-2xl">
+                            <div className="bg-white dark:bg-gray-700 px-4 py-2 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-sm">
                               <div className="flex space-x-1">
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                               </div>
                             </div>
                           </div>

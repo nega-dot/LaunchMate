@@ -18,6 +18,11 @@ const DocumentGenerator: React.FC = () => {
     businessActivity: '',
     email: '',
     phone: '',
+    gender: '',
+    category: '',
+    district: '',
+    nicCode: '',
+    dateOfCommencement: '',
   });
 
   const [activeDocument, setActiveDocument] = useState<string | null>(null);
@@ -28,28 +33,28 @@ const DocumentGenerator: React.FC = () => {
       id: 'spice',
       name: 'SPICe+ Form (Company Registration)',
       description: 'Integrated form for company incorporation',
-      requiredFields: ['companyName', 'directorName', 'directorPan', 'registeredAddress', 'paidUpCapital', 'authorizedCapital'],
+      requiredFields: ['companyName', 'directorName', 'directorPan', 'registeredAddress', 'paidUpCapital', 'authorizedCapital', 'gender', 'category'],
       estimatedTime: '5 minutes',
     },
     {
       id: 'gst',
       name: 'GST Registration Application',
       description: 'Form for Goods and Services Tax registration',
-      requiredFields: ['companyName', 'registeredAddress', 'directorPan', 'businessActivity'],
+      requiredFields: ['companyName', 'registeredAddress', 'directorPan', 'businessActivity', 'district'],
       estimatedTime: '3 minutes',
     },
     {
       id: 'udyam',
       name: 'Udyam Registration Form',
       description: 'MSME registration for manufacturing/service businesses',
-      requiredFields: ['companyName', 'directorName', 'directorAadhaar', 'businessActivity'],
+      requiredFields: ['companyName', 'directorName', 'directorAadhaar', 'businessActivity', 'nicCode', 'dateOfCommencement'],
       estimatedTime: '4 minutes',
     },
     {
       id: 'dpiit',
       name: 'DPIIT Recognition Application',
       description: 'Department for Promotion of Industry and Internal Trade recognition',
-      requiredFields: ['companyName', 'directorName', 'registeredAddress', 'businessActivity'],
+      requiredFields: ['companyName', 'directorName', 'registeredAddress', 'businessActivity', 'dateOfCommencement'],
       estimatedTime: '7 minutes',
     },
   ];
@@ -60,9 +65,14 @@ const DocumentGenerator: React.FC = () => {
     { key: 'directorPan', label: 'Director PAN *', type: 'text', placeholder: 'ABCDE1234F' },
     { key: 'directorAadhaar', label: 'Director Aadhaar *', type: 'text', placeholder: '1234 5678 9012' },
     { key: 'registeredAddress', label: 'Registered Address *', type: 'textarea', placeholder: 'Enter complete address' },
+    { key: 'gender', label: 'Gender *', type: 'select', options: ['', 'Male', 'Female', 'Other'] },
+    { key: 'category', label: 'Category *', type: 'select', options: ['', 'General', 'SC', 'ST', 'OBC'] },
+    { key: 'district', label: 'District *', type: 'text', placeholder: 'Enter district name' },
     { key: 'paidUpCapital', label: 'Paid Up Capital', type: 'number', placeholder: '100000' },
     { key: 'authorizedCapital', label: 'Authorized Capital', type: 'number', placeholder: '100000' },
     { key: 'businessActivity', label: 'Business Activity *', type: 'text', placeholder: 'Describe main business activity' },
+    { key: 'nicCode', label: 'NIC Code *', type: 'text', placeholder: 'Enter NIC code (e.g., 62013)' },
+    { key: 'dateOfCommencement', label: 'Date of Commencement *', type: 'date', placeholder: '' },
     { key: 'email', label: 'Email Address', type: 'email', placeholder: 'contact@company.com' },
     { key: 'phone', label: 'Phone Number', type: 'tel', placeholder: '+91 9876543210' },
   ];
@@ -104,6 +114,8 @@ Paid-up Capital: ₹${formData.paidUpCapital}
 PART B - DIRECTOR DETAILS
 Name: ${formData.directorName}
 PAN: ${formData.directorPan}
+Gender: ${formData.gender}
+Category: ${formData.category}
 Email: ${formData.email}
 Phone: ${formData.phone}
 
@@ -130,6 +142,7 @@ PAN: ${formData.directorPan}
 PRINCIPAL PLACE OF BUSINESS
 Address: ${formData.registeredAddress}
 State: Delhi
+District: ${formData.district}
 Email: ${formData.email}
 Mobile: ${formData.phone}
 
@@ -159,20 +172,20 @@ Ministry of Micro, Small and Medium Enterprises
 ENTREPRENEUR INFORMATION
 Name: ${formData.directorName}
 Aadhaar Number: ${formData.directorAadhaar}
-Gender: [To be filled]
-Category: [To be filled]
+Gender: ${formData.gender}
+Category: ${formData.category}
 
 ENTERPRISE INFORMATION
 Name of Enterprise: ${formData.companyName}
 Type of Organization: Private Limited Company
 Location of Plant/Office: ${formData.registeredAddress}
-District: [Delhi District]
+District: ${formData.district}
 State: Delhi
 
 ACTIVITY & INVESTMENT
 Major Activity: ${formData.businessActivity}
-NIC Code: [To be determined based on activity]
-Date of Commencement: [To be filled]
+NIC Code: ${formData.nicCode}
+Date of Commencement: ${formData.dateOfCommencement}
 
 BANK DETAILS
 Bank Name: [To be filled]
@@ -200,7 +213,7 @@ Company Identification Number: [To be obtained after incorporation]
 REGISTERED OFFICE
 Address: ${formData.registeredAddress}
 State: Delhi
-District: [Delhi District]
+District: ${formData.district}
 Pin Code: [To be filled]
 
 DIRECTOR/FOUNDER DETAILS
@@ -213,6 +226,7 @@ Mobile: ${formData.phone}
 BUSINESS DETAILS
 Business Description: ${formData.businessActivity}
 Sector: [To be selected based on activity]
+Date of Incorporation: ${formData.dateOfCommencement}
 Innovation Type: [Product/Process/Service]
 
 SCALABILITY
@@ -298,7 +312,208 @@ Director
               )}
 
               <form className="space-y-6">
-                {requiredFields.map((field) => (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {requiredFields.map((field) => (
+                    <div key={field.key} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        {field.label}
+                      </label>
+                      {field.type === 'textarea' ? (
+                        <textarea
+                          rows={3}
+                          className="input-field resize-none"
+                          value={formData[field.key as keyof typeof formData]}
+                          onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
+                          placeholder={field.placeholder}
+                        />
+                      ) : field.type === 'select' ? (
+                        <select
+                          className="input-field"
+                          value={formData[field.key as keyof typeof formData]}
+                          onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
+                        >
+                          {field.options?.map((option) => (
+                            <option key={option} value={option}>
+                              {option || 'Select...'}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          type={field.type}
+                          className="input-field"
+                          value={formData[field.key as keyof typeof formData]}
+                          onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
+                          placeholder={field.placeholder}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </form>
+            </Card>
+
+            {/* Document Preview */}
+            {activeDocument && (
+              <Card>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Document Preview: {documents.find(d => d.id === activeDocument)?.name}
+                  </h3>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      icon={Copy}
+                      onClick={() => copyToClipboard(getDocumentTemplate(activeDocument))}
+                    >
+                      Copy
+                    </Button>
+                    <Button
+                      size="sm"
+                      icon={Download}
+                      onClick={() => downloadDocument(activeDocument)}
+                    >
+                      Download
+                    </Button>
+                  </div>
+                </div>
+                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                  <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono">
+                    {getDocumentTemplate(activeDocument)}
+                  </pre>
+                </div>
+              </Card>
+            )}
+          </div>
+
+          {/* Documents Sidebar */}
+          <div className="space-y-6">
+            {/* Available Documents */}
+            <Card>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">{t('documents.availableDocuments')}</h3>
+              <div className="space-y-4">
+                {documents.map((doc) => {
+                  const canGenerate = canGenerateDocument(doc);
+                  const isGenerated = generatedDocs.includes(doc.id);
+                  
+                  return (
+                    <div
+                      key={doc.id}
+                      className={`p-4 border rounded-lg transition-colors ${
+                        canGenerate ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'
+                      }`}
+                    >
+                      <div className="flex items-start space-x-3">
+                        <div className="flex-shrink-0 mt-1">
+                          {isGenerated ? (
+                            <CheckCircle className="h-5 w-5 text-green-500" />
+                          ) : canGenerate ? (
+                            <FileText className="h-5 w-5 text-green-600" />
+                          ) : (
+                            <AlertCircle className="h-5 w-5 text-gray-400" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-1">
+                            {doc.name}
+                          </h4>
+                          <p className="text-xs text-gray-600 dark:text-gray-300 mb-2">{doc.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              ⏱️ {doc.estimatedTime}
+                            </span>
+                            {canGenerate ? (
+                              <div className="flex space-x-1">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-xs px-2 py-1 h-auto"
+                                  icon={Eye}
+                                  onClick={() => setActiveDocument(doc.id)}
+                                >
+                                  {t('documents.preview')}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  className="text-xs px-2 py-1 h-auto"
+                                  icon={isGenerated ? Download : FileText}
+                                  onClick={() => generateDocument(doc.id)}
+                                >
+                                  {isGenerated ? t('documents.download') : t('documents.generate')}
+                                </Button>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-red-600 dark:text-red-400">
+                                {t('documents.missingFields')}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+
+            {/* Legal Language Simplifier */}
+            <Card>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                {t('documents.legalSimplifier') || 'Legal Language Simplifier'}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                {t('documents.legalSimplifierDesc') || 'Convert complex legal jargon into plain English for better understanding.'}
+              </p>
+              <div className="space-y-3">
+                <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Complex:</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">"Authorized Share Capital"</p>
+                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 mt-2">Simple:</p>
+                  <p className="text-xs text-green-700 dark:text-green-400">"Maximum money you can raise by selling shares"</p>
+                </div>
+                <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Complex:</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">"Memorandum of Association"</p>
+                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 mt-2">Simple:</p>
+                  <p className="text-xs text-green-700 dark:text-green-400">"Document defining your company's purpose and scope"</p>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" className="w-full mt-4">
+                Learn More Legal Terms
+              </Button>
+            </Card>
+
+            {/* Help & Tips */}
+            <Card>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">{t('documents.tips')}</h3>
+              <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
+                <div className="flex items-start space-x-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p>{t('documents.tip1') || 'Keep your PAN and Aadhaar details handy for quick form filling'}</p>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p>{t('documents.tip2') || 'Use your registered office address consistently across all documents'}</p>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p>{t('documents.tip3') || 'Review generated documents before submitting to authorities'}</p>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p>{t('documents.tip4') || 'Save generated documents for future reference and modifications'}</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DocumentGenerator;
                   <div key={field.key}>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {field.label}
